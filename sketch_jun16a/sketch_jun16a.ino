@@ -10,6 +10,7 @@ int averageL = 0;
 int averageH = 0;
 
 int doubleAverage = 0;
+
 int oneHalfAverage = 0;
 
 int ledState = 0; 
@@ -54,6 +55,7 @@ void setup() {
 
   //calculate average and other values for different pysiological conditions
   average = average/10;
+  //calculation for input error
   average = average + 400;
 //  averageH = average * 1.25;
   averageL = average * 0.5;
@@ -84,7 +86,7 @@ void loop() {
             unsigned long currentDA = millis();
             if ( currentDA - previousDA >= intervalDA){                
                 previousDA = currentDA;                
-                Serial.println("ab");
+                Serial.println("doubleAverage");
                 analogWrite(outPutPin, 170);
             }
         }
@@ -95,7 +97,7 @@ void loop() {
             unsigned long currentOHA = millis();            
             if ( currentOHA - previousOHA >= intervalOHA){
                 previousOHA = currentOHA; 
-                Serial.println("ac");               
+                Serial.println("oneHalfAverage");               
                 analogWrite(outPutPin, 140);            
             }            
         }
@@ -113,7 +115,7 @@ void loop() {
         // normal case, good posture
         // TO-DO, may set interval in place of average
         else if( sensorValue > averageL && sensorValue < oneHalfAverage){
-          Serial.println("af");
+          Serial.println("good posture");
           Serial.println(averageL);
           Serial.println(oneHalfAverage);
           
@@ -134,21 +136,21 @@ void loop() {
               
               //to blink without delay
               //to drive motor continously in on-off state, on-off vibrations
-                unsigned long currentMillis = millis();
-  if (currentMillis - previousMillis >= interval) {
-    // save the last time you blinked the LED
-    previousMillis = currentMillis;
-
-    // if the LED is off turn it on and vice-versa:
-    if (ledState == 0) {
-      ledState = 170;
-    } else {
-      ledState = 0;
-    }
-
-    // set the LED with the ledState of the variable:
-    analogWrite(outPutPin, ledState);
-    Serial.println("aa");
+                  unsigned long currentMillis = millis();
+                  if (currentMillis - previousMillis >= interval) {
+                    // save the last time you blinked the LED
+                    previousMillis = currentMillis;
+                
+                    // if the LED is off turn it on and vice-versa:
+                    if (ledState == 0) {
+                      ledState = 170;
+                    } else {
+                      ledState = 0;
+                    }
+                
+                    // set the LED with the ledState of the variable:
+                    analogWrite(outPutPin, ledState);
+                    Serial.println("no input");
                   /*Serial.println(average);
                  
               */}
