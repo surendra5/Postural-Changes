@@ -27,13 +27,13 @@ unsigned long previousOHA = 0;
 unsigned long previousDA = 0;
 
 // interval at which to blink (milliseconds)
-const long interval = 1000;
+const long interval =0; //1000;
 
-const long intervalA = 300000;
+const long intervalA = 0;//300000;
 
-const long intervalOHA = 300000;
+const long intervalOHA = 0;//300000;
 
-const long intervalDA = 300000;
+const long intervalDA = 0;//300000;
 
 void setup() {
   float sensorValue = analogRead(inputPin);
@@ -56,7 +56,7 @@ void setup() {
   //calculate average and other values for different pysiological conditions
   average = average/10;
   //calculation for input error
-  average = average + 400;
+ // average = average + 400;
 //  averageH = average * 1.25;
   averageL = average * 0.5;
   oneHalfAverage = average * 1.5; 
@@ -71,6 +71,7 @@ void loop() {
 
         // taking input from flex sensor
        int sensorValue = analogRead(inputPin);
+       Serial.println("input");
         Serial.println(analogRead(inputPin));
         // to convert into voltage
         //float sensorValue  = sensorValue * (5.0 / 1023.0);
@@ -86,7 +87,7 @@ void loop() {
             unsigned long currentDA = millis();
             if ( currentDA - previousDA >= intervalDA){                
                 previousDA = currentDA;                
-                Serial.println("doubleAverage");
+                Serial.println("bahot jyada galat baitha hai bhai, abhi bh sudhar jaa, time hai - doubleAverage");
                 analogWrite(outPutPin, 170);
             }
         }
@@ -97,7 +98,7 @@ void loop() {
             unsigned long currentOHA = millis();            
             if ( currentOHA - previousOHA >= intervalOHA){
                 previousOHA = currentOHA; 
-                Serial.println("oneHalfAverage");               
+                Serial.println("galat baitha hai bhai - oneHalfAverage");               
                 analogWrite(outPutPin, 140);            
             }            
         }
@@ -115,8 +116,8 @@ void loop() {
         // normal case, good posture
         // TO-DO, may set interval in place of average
         else if( sensorValue > averageL && sensorValue < oneHalfAverage){
-          Serial.println("good posture");
-          Serial.println(averageL);
+          Serial.println("good posture");//Serial.println("averageL");
+          Serial.println(averageL);//Serial.println("oneHalfAverage");
           Serial.println(oneHalfAverage);
           
             analogWrite(outPutPin, 170);
