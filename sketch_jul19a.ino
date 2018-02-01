@@ -119,9 +119,9 @@ void loop() {
 
   int xAng = map(axis_X, minVal, maxVal, -90, 90);
 
-    int yAng = map(axis_Y, minVal, maxVal, -90, 90);
+  int yAng = map(axis_Y, minVal, maxVal, -90, 90);
 
-    int zAng = map(axis_Z, minVal, maxVal, -90, 90);
+  int zAng = map(axis_Z, minVal, maxVal, -90, 90);
 
 
   x = RAD_TO_DEG * (atan2(-yAng, -zAng) + PI);
@@ -130,6 +130,7 @@ void loop() {
 
   //  z = RAD_TO_DEG * (atan2(-yAng, -xAng) + PI);
 
+  static int flag_time = 0;
 
   Serial.print("Angle of inclination in X axis = ");
 
@@ -139,62 +140,81 @@ void loop() {
 
   if ( x > avgGyroVH ) {
     Serial.println("da");
-    unsigned long currentVH = millis();
-    if ((unsigned long)(currentVH - previousVH) >= interval) {
-      previousVH = currentVH;
-      Serial.println("wrong posture - doubleAverage");
-   //time delay for blink
-   /* int i = 10000;
-    int j=0;
-    for(j=0;j<i;j++)
-      analogWrite(outPutPin, 0);*/
-    analogWrite(outPutPin, 170);
+    if (flag_time == 0) {
+      unsigned long currentVH = millis();
+      if ((unsigned long)(currentVH - previousVH) >= interval) {
+        previousVH = currentVH;
+        Serial.println("wrong posture - doubleAverage");
+        analogWrite(outPutPin, 170);
+      }
     }
-    
+    else {
+      Serial.println("wrong posture - doubleAverage");
+      analogWrite(outPutPin, 170);
+      flag_time = 1;
+    }
   }
   else if ( x > avgGyroH ) {
     Serial.println("a");
-    unsigned long currentH = millis();
-    if ((unsigned long)(currentH - previousH) >= interval) {
-      previousH = currentH;
-      
-    Serial.println("wrong  - Average");
-    int j=0;int i=10000;
-    for(j=0;j<i;j++)
-      analogWrite(outPutPin, 0);
-    analogWrite(outPutPin, 0);
-    analogWrite(outPutPin, 170);
+    //if returning form correct posture , then give time delay, otherwise not
+    if (flag_time == 0) {
+      unsigned long currentH = millis();
+      if ((unsigned long)(currentH - previousH) >= interval) {
+        previousH = currentH;
+        Serial.println("wrong  - Average");
+        int j = 0; int i = 10000;
+        for (j = 0; j < i; j++) analogWrite(outPutPin, 0);
+        analogWrite(outPutPin, 170);
+      }
+    }
+    else {
+      Serial.println("wrong  - Average");
+      int j = 0; int i = 10000;
+      for (j = 0; j < i; j++) analogWrite(outPutPin, 0);
+      analogWrite(outPutPin, 170);
+      flag_time = 1;
     }
   }
   else if ( x < avgGyroH && x > avgGyroL ) {
-    /* unsigned long currentH = millis();
-      if ( currentH - previousH >= intervalOHA){
-          previousH = currentH;
-    }*/
+    //if ( currentH - previousH >= intervalOHA){
+    if (flag_time == 1) flag_time = 0;
     Serial.println("sahi");
     analogWrite(outPutPin, 0);
     //analogWrite(outPutPin, 170);
-  } 
+  }
   else if ( x < avgGyroL ) {
-    unsigned long currentL = millis();
-    if ( (unsigned long)(currentL - previousL) >= interval) {
-      previousL = currentL;
+    if (flag == 0) {
+      unsigned long currentL = millis();
+      if ( (unsigned long)(currentL - previousL) >= interval) {
+        previousL = currentL;
+        analogWrite(outPutPin, 0);
+        Serial.println("wrong  - LowAverage");
+        analogWrite(outPutPin, 170);
+      }
     }
-    analogWrite(outPutPin, 0);
-    Serial.println("wrong  - LowAverage");
-    analogWrite(outPutPin, 170);
+    else {
+      analogWrite(outPutPin, 0);
+      Serial.println("wrong  - LowAverage");
+      analogWrite(outPutPin, 170);
+    }
   }
   else if ( x < avgGyroVL ) {
-    unsigned long currentVL = millis();
-    if ( (unsigned long)(currentVL - previousVL) >= interval) {
-      previousVL = currentVL;
+       if (flag == 0) {
+      unsigned long currentVL = millis();
+      if ((unsigned long)(currentVL - previousVL) >= interval) {
+        previousVL = currentVL;
+        analogWrite(outPutPin, 0);
+        Serial.println("wrong - doubleLowAverage");
+        analogWrite(outPutPin, 170);
+      }
     }
-    analogWrite(outPutPin, 0);
-  Serial.println("wrong - doubleLowAverage");
-  analogWrite(outPutPin, 0);analogWrite(outPutPin, 0);analogWrite(outPutPin, 0);
-  analogWrite(outPutPin, 170);
+    else {
+      analogWrite(outPutPin, 0);
+      Serial.println("wrong - doubleLowAverage");
+      analogWrite(outPutPin, 170);
+    }
   }
-  //TO CHECK, 
+  //TO CHECK,
   else {
     unsigned long currentMillisG = millis();
     if ((unsigned long)(currentMillisG - previousMillisG) >= interval) {
@@ -205,21 +225,21 @@ void loop() {
     analogWrite(outPutPin, 0);
     analogWrite(outPutPin, 170);
   }
-/*  Serial.print("Angle of inclination in Y axis= ");
+  /*  Serial.print("Angle of inclination in Y axis= ");
 
-  Serial.print(y);
+    Serial.print(y);
 
-  Serial.println((char)176);
+    Serial.println((char)176);
 
 
-  Serial.print("Angle of inclination in Z axis= ");
+    Serial.print("Angle of inclination in Z axis= ");
 
-  Serial.print(z);
+    Serial.print(z);
 
-  Serial.println((char)176);*/
+    Serial.println((char)176);*/
 
-Serial.println("-------------------------------------------");
-//not to use delay
-delay(1000);
+  Serial.println("-------------------------------------------");
+  //not to use delay
+  delay(1000);
 
 }
